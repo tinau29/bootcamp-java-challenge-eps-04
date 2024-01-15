@@ -20,7 +20,7 @@ public class CarController {
     @Autowired
     CarRepository carRepository;
 
-    @PostMapping({"/car", "/car/"})
+    @PostMapping({"/cars", "/cars/"})
     public ResponseEntity<Map<String, Object>> createCar(@RequestBody Car car) {
         Map<String, Object> res = new HashMap<>();
 

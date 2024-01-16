@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -41,6 +42,11 @@ public class CarController {
         return ResponseEntity.ok(res);
     }
 
+    @GetMapping("/cars/{id}")
+    public Car getCar(@PathVariable("id") Car car){
+        return car;
+    }
+
     @PutMapping({"/cars/{id}", "/cars/{id}"})
     public ResponseEntity<Map<String, Object>> updateCar(@PathVariable("id") Car oldCar, @RequestBody Car newCar){
         Map<String, Object> res = new HashMap<>();
@@ -60,6 +66,22 @@ public class CarController {
         res.put("is_success", true);
         res.put("message", "success");
         res.put("car", oldCar);
+        return ResponseEntity.ok(res);
+    }
+
+    @DeleteMapping({"/cars/{id}", "/cars/{id}"})
+    public ResponseEntity<Map<String, Object>> deleteAction(@PathVariable("id") Car car) {
+        Map<String, Object> res = new HashMap<>();
+        try{
+            carRepository.deleteById(car.getId());
+        }catch(Exception e) {
+            res.put("is_success", false);
+            res.put("message", "error "+e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
+        }
+
+        res.put("is_success", true);
+        res.put("message", "success");
         return ResponseEntity.ok(res);
     }
 }

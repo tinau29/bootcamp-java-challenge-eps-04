@@ -23,7 +23,7 @@ public class CarController {
         return carRepository.findAll();
     }
 
-    @PostMapping({"/cars", "/cars/"})
+    @PostMapping({"/cars"})
     public ResponseEntity<Map<String, Object>> createCar(@RequestBody Car car) {
         Map<String, Object> res = new HashMap<>();
 

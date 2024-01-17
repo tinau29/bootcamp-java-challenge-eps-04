@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Car;
 import com.example.demo.repository.CarRepository;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,37 +44,42 @@ public class CarController {
     }
 
     @GetMapping("/cars/{id}")
-    public Car getCar(@PathVariable("id") Car car){
+    public Optional<Car> getCar(@PathVariable("id") @Parameter(name = "id", description = "Car id", example = "1", required = true) String id){
+        Optional<Car> car = carRepository.findById(id);
         return car;
     }
 
     @PutMapping({"/cars/{id}", "/cars/{id}"})
-    public ResponseEntity<Map<String, Object>> updateCar(@PathVariable("id") Car oldCar, @RequestBody Car newCar){
+    public ResponseEntity<Map<String, Object>> updateCar(@PathVariable("id") @Parameter(name = "id", description = "Car id", example = "1", required = true) String id, @RequestBody Car newCar){
         Map<String, Object> res = new HashMap<>();
 
         try{
-            oldCar.setBranch(newCar.getBranch());
-            oldCar.setSeries(newCar.getSeries());
-            oldCar.setTopSpeedKmph(newCar.getTopSpeedKmph());
-            oldCar.setCountry(newCar.getCountry());
-            carRepository.save(newCar);
+            Optional<Car> oldCar = carRepository.findById(id);
+            Car carUpdate = oldCar.get();
+            carUpdate.setName(newCar.getName());
+            carUpdate.setBranch(newCar.getBranch());
+            carUpdate.setSeries(newCar.getSeries());
+            carUpdate.setTopSpeedKmph(newCar.getTopSpeedKmph());
+            carUpdate.setCountry(newCar.getCountry());
+            carRepository.save(carUpdate);
+
+            res.put("is_success", true);
+            res.put("message", "success");
+            res.put("car", oldCar);
         }catch(Exception e) {
             res.put("is_success", false);
             res.put("message", "error "+e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
 
-        res.put("is_success", true);
-        res.put("message", "success");
-        res.put("car", oldCar);
         return ResponseEntity.ok(res);
     }
 
     @DeleteMapping({"/cars/{id}", "/cars/{id}"})
-    public ResponseEntity<Map<String, Object>> deleteAction(@PathVariable("id") Car car) {
+    public ResponseEntity<Map<String, Object>> deleteAction(@PathVariable("id") @Parameter(name = "id", description = "Car id", example = "1", required = true) String id) {
         Map<String, Object> res = new HashMap<>();
         try{
-            carRepository.deleteById(car.getId());
+            carRepository.deleteById(id);
         }catch(Exception e) {
             res.put("is_success", false);
             res.put("message", "error "+e.getMessage());

@@ -11,6 +11,10 @@ public class Car {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(name = "name")
+    @JsonProperty("name")
+    private String name;
+
     @Column(name = "brand")
     @JsonProperty("brand")
     private String branch;
@@ -26,6 +30,14 @@ public class Car {
     @Column(name = "country")
     @JsonProperty("country")
     private String country;
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
 
     public String getId() {
         return id;

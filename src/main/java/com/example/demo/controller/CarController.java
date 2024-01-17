@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Car;
 import com.example.demo.repository.CarRepository;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,8 @@ public class CarController {
     }
 
     @GetMapping("/cars/{id}")
-    public Car getCar(@PathVariable("id") Car car){
+    public Optional<Car> getCar(@PathVariable("id") @Parameter(name = "id", description = "Car id", example = "1", required = true) String id){
+        Optional<Car> car = carRepository.findById(id);
         return car;
     }
 
@@ -70,10 +72,10 @@ public class CarController {
     }
 
     @DeleteMapping({"/cars/{id}", "/cars/{id}"})
-    public ResponseEntity<Map<String, Object>> deleteAction(@PathVariable("id") Car car) {
+    public ResponseEntity<Map<String, Object>> deleteAction(@PathVariable("id") @Parameter(name = "id", description = "Car id", example = "1", required = true) String id) {
         Map<String, Object> res = new HashMap<>();
         try{
-            carRepository.deleteById(car.getId());
+            carRepository.deleteById(id);
         }catch(Exception e) {
             res.put("is_success", false);
             res.put("message", "error "+e.getMessage());
